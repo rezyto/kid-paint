@@ -3,6 +3,7 @@ name: Construir APK
 on:
   push:
     branches: [main]
+    paths-ignore: ['**.md', 'replica/**']
   workflow_dispatch:
 
 permissions:
@@ -17,6 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Identificar a versão da parte nativa
+        run: echo "NATIVE_ID=$(git log -1 --format=%h -- app build.gradle.kts settings.gradle.kts gradle.properties)" >> "$GITHUB_ENV"
 
       - uses: actions/setup-java@v5
         with:
@@ -34,8 +40,12 @@ jobs:
       - name: Compilar o APK
         run: gradle :app:assembleRelease --no-daemon --stacktrace
 
-      - name: Preparar ficheiro
-        run: cp app/build/outputs/apk/release/app-release.apk PintaComigo.apk
+      - name: Preparar ficheiros
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk PintaComigo.apk
+          (cd web && zip -r -X ../web.zip .)
+          echo "{\"version\": ${{ github.run_number }}, \"native\": \"$NATIVE_ID\"}" > meta.json
+          cat meta.json
 
       - name: Publicar versão (as apps instaladas atualizam-se a partir daqui)
         uses: softprops/action-gh-release@v2
@@ -43,9 +53,12 @@ jobs:
           tag_name: v1.${{ github.run_number }}
           name: Pinta Comigo 1.${{ github.run_number }}
           make_latest: true
-          files: PintaComigo.apk
+          files: |
+            PintaComigo.apk
+            web.zip
+            meta.json
           body: |
             📲 **Para instalar no tablet:** abre esta página no tablet, toca em **PintaComigo.apk** e depois em **Instalar**.
             Se for a primeira vez, o Android pede para "permitir instalar apps desta origem": aceita.
 
-            Quem já tem a app instalada recebe esta versão sozinho (a app pergunta "Atualizar?"). Os desenhos ficam guardados.
+            Quem já tem a app instalada recebe esta versão sozinho: ao abrir a app, as novidades são descarregadas e aplicadas automaticamente. Os desenhos ficam guardados.

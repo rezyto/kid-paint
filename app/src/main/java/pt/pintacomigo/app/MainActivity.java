@@ -11,9 +11,17 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.view.WindowManager;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
@@ -41,7 +49,14 @@ public class MainActivity extends Activity {
     private static final int REQ_FILE = 41;
     private static final int REQ_STORAGE = 42;
 
+    private static final long CHECK_EVERY_MS = 2L * 60 * 1000;      // ao voltar à app, verifica no máximo de 2 em 2 minutos
+    private static final long APK_ASK_EVERY_MS = 24L * 60 * 60 * 1000;
+
     private WebView web;
+    private View splash;
+    private boolean pageStarted = false;
+    private boolean checking = false;
+    private final Handler ui = new Handler(Looper.getMainLooper());
     private ValueCallback<Uri[]> fileCallback;
     private Uri cameraUri;
 
@@ -51,7 +66,7 @@ public class MainActivity extends Activity {
 
         final WebViewAssetLoader loader = new WebViewAssetLoader.Builder()
                 .setDomain(HOST)
-                .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                .addPathHandler("/assets/", new WebUpdater.PathHandler(this))
                 .build();
 
         if (Build.VERSION.SDK_INT >= 28) {
@@ -85,6 +100,11 @@ public class MainActivity extends Activity {
             }
 
             @Override
+            public void onPageFinished(WebView view, String url) {
+                if (splash != null) splash.setVisibility(View.GONE);
+            }
+
+            @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 // Segurança para crianças: a app nunca abre páginas da internet.
                 return !HOST.equals(request.getUrl().getHost());
@@ -101,11 +121,97 @@ public class MainActivity extends Activity {
         });
 
         web.addJavascriptInterface(new Bridge(), "AndroidBridge");
-        setContentView(web);
-        hideSystemBars();
-        web.loadUrl(START_URL);
 
-        Updater.checkDaily(this);
+        FrameLayout root = new FrameLayout(this);
+        root.addView(web, new FrameLayout.LayoutParams(-1, -1));
+        splash = buildSplash();
+        root.addView(splash, new FrameLayout.LayoutParams(-1, -1));
+        setContentView(root);
+        hideSystemBars();
+
+        startWithLatest();
+    }
+
+    /* Ao abrir: aplica o que já foi descarregado, procura novidades (no máximo ~6 s) e só depois mostra a app. */
+    private void startWithLatest() {
+        WebUpdater.cleanupIfApkNewer(this);
+        WebUpdater.applyPending(this);
+        final boolean[] done = {false};
+        final Runnable go = () -> {
+            if (done[0]) return;
+            done[0] = true;
+            pageStarted = true;
+            web.loadUrl(START_URL);
+        };
+        ui.postDelayed(go, 6000); // sem internet lenta a prender a criança
+        checking = true;
+        new Thread(() -> {
+            WebUpdater.Result r = WebUpdater.check(this);
+            ui.post(() -> {
+                checking = false;
+                if (!done[0]) {
+                    WebUpdater.applyPending(this); // ainda não carregou nada: entra já na versão nova
+                    go.run();
+                }
+                maybeAskApk(r);
+            });
+        }).start();
+    }
+
+    /* Ao voltar à app (sem a fechar): se houver novidades, descarrega e recarrega já com elas. */
+    private void checkOnResume() {
+        if (checking || !pageStarted || !WebUpdater.dueForCheck(this, CHECK_EVERY_MS)) return;
+        checking = true;
+        new Thread(() -> {
+            WebUpdater.Result r = WebUpdater.check(this);
+            ui.post(() -> {
+                checking = false;
+                if (r.webUpdated) applyAndReload();
+                maybeAskApk(r);
+            });
+        }).start();
+    }
+
+    private void applyAndReload() {
+        if (web == null) return;
+        // guarda o desenho, troca os ficheiros e recarrega (a app volta ao desenho em que estava)
+        web.evaluateJavascript("(window.__saveNow && window.__saveNow(), true)", v -> ui.postDelayed(() -> {
+            if (WebUpdater.applyPending(this) && web != null) {
+                if (splash != null) splash.setVisibility(View.VISIBLE);
+                web.reload();
+            }
+        }, 700));
+    }
+
+    private void maybeAskApk(WebUpdater.Result r) {
+        if (r == null || r.apkUrl == null || isFinishing()) return;
+        android.content.SharedPreferences p = getSharedPreferences("updater", MODE_PRIVATE);
+        if (System.currentTimeMillis() - p.getLong("asked", 0) < APK_ASK_EVERY_MS) return;
+        p.edit().putLong("asked", System.currentTimeMillis()).apply();
+        Updater.ask(this, r.apkUrl, "1." + r.remoteVersion);
+    }
+
+    private View buildSplash() {
+        LinearLayout box = new LinearLayout(this);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.setGravity(Gravity.CENTER);
+        box.setBackgroundColor(0xFFF7F5F2);
+        box.setClickable(true);
+        float d = getResources().getDisplayMetrics().density;
+        ImageView icon = new ImageView(this);
+        icon.setImageResource(R.mipmap.ic_launcher);
+        box.addView(icon, new LinearLayout.LayoutParams((int) (96 * d), (int) (96 * d)));
+        TextView t = new TextView(this);
+        t.setText("Pinta Comigo");
+        t.setTextSize(22);
+        t.setTextColor(0xFF1F1B2D);
+        t.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+        t.setPadding(0, (int) (16 * d), 0, (int) (18 * d));
+        box.addView(t);
+        ProgressBar pb = new ProgressBar(this);
+        pb.setIndeterminate(true);
+        box.addView(pb, new LinearLayout.LayoutParams((int) (32 * d), (int) (32 * d)));
+        return box;
     }
 
     /* ---------- fotos: câmara ou galeria ---------- */
@@ -164,12 +270,24 @@ public class MainActivity extends Activity {
     private class Bridge {
         @JavascriptInterface
         public String getVersion() {
-            return BuildConfig.VERSION_NAME;
+            return "1." + WebUpdater.currentVersion(MainActivity.this);
         }
 
         @JavascriptInterface
         public void checkUpdate(final boolean manual) {
-            runOnUiThread(() -> Updater.check(MainActivity.this, manual));
+            new Thread(() -> {
+                WebUpdater.Result r = WebUpdater.check(MainActivity.this);
+                ui.post(() -> {
+                    if (r.webUpdated) {
+                        Toast.makeText(MainActivity.this, "Nova versão instalada ✓", Toast.LENGTH_SHORT).show();
+                        applyAndReload();
+                    } else if (r.apkUrl != null) {
+                        Updater.ask(MainActivity.this, r.apkUrl, "1." + r.remoteVersion);
+                    } else if (manual) {
+                        Toast.makeText(MainActivity.this, r.remoteVersion < 0 ? "Sem internet. Tenta mais tarde." : "A app já está atualizada ✓", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }).start();
         }
 
         @JavascriptInterface
@@ -288,6 +406,12 @@ public class MainActivity extends Activity {
     protected void onPause() {
         saveNow();
         super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkOnResume();
     }
 
     @Override

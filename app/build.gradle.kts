@@ -5,6 +5,8 @@ plugins {
 // Cada compilação no GitHub tem um número novo -> a app sabe quando há uma versão mais recente.
 val buildNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInt()
 val updateRepo = System.getenv("GITHUB_REPOSITORY") ?: "rezyto/kid-paint"
+// Muda só quando a parte nativa (Android) muda; o conteúdo da app atualiza-se sozinho sem isto.
+val nativeId = System.getenv("NATIVE_ID") ?: "dev"
 
 android {
     namespace = "pt.pintacomigo.app"
@@ -17,6 +19,7 @@ android {
         versionCode = buildNumber
         versionName = "1.$buildNumber"
         buildConfigField("String", "UPDATE_REPO", "\"$updateRepo\"")
+        buildConfigField("String", "NATIVE_ID", "\"$nativeId\"")
     }
 
     // A mesma chave em todas as versões: é isto que permite atualizar sem desinstalar (e sem perder os desenhos).

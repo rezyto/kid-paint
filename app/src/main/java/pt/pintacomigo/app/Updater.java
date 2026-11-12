@@ -98,11 +98,11 @@ final class Updater {
         }
     }
 
-    private static void ask(final Activity a, final String url, String version) {
+    static void ask(final Activity a, final String url, String version) {
         if (a.isFinishing()) return;
         new AlertDialog.Builder(a)
                 .setTitle("Nova versão da Pinta Comigo (" + version + ")")
-                .setMessage("Há melhorias novas. Os desenhos ficam todos guardados.\n\nAtualizar agora?")
+                .setMessage("Esta versão traz melhorias que precisam de ser instaladas uma vez. Os desenhos ficam todos guardados.\n\nAtualizar agora?")
                 .setPositiveButton("Atualizar", (d, w) -> download(a, url))
                 .setNegativeButton("Mais tarde", null)
                 .show();
