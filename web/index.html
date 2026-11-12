@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#FFF7E8">
+<title>Pinta Comigo</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- S01 Início -->
+<section id="home" class="screen">
+  <header class="home-head">
+    <h1 class="logo"><span>P</span><span>i</span><span>n</span><span>t</span><span>a</span> <span>C</span><span>o</span><span>m</span><span>i</span><span>g</span><span>o</span> 🎨</h1>
+    <button id="btnParents" class="icon-btn small" aria-label="Pais: mantém carregado">⚙️</button>
+  </header>
+  <div id="continueBox"></div>
+  <div class="tiles" id="tiles"></div>
+</section>
+
+<!-- S02 Catálogo -->
+<section id="catalog" class="screen hidden">
+  <header class="bar">
+    <button class="icon-btn" data-back aria-label="Voltar">⬅️</button>
+    <h2 id="catTitle"></h2>
+    <div class="levels" id="levels" role="radiogroup" aria-label="Nível"></div>
+    <button class="icon-btn" id="btnRandom" aria-label="Surpreende-me">🎲</button>
+  </header>
+  <div class="grid" id="catGrid"></div>
+  <p class="sentinel">Há sempre mais desenhos: continua a descer 👇</p>
+</section>
+
+<!-- S03 Pintar -->
+<section id="paint" class="screen hidden">
+  <div class="p-top">
+    <button class="icon-btn" id="pBack" aria-label="Voltar ao início">🏠</button>
+    <button class="icon-btn" id="pUndo" aria-label="Desfazer">↩️</button>
+    <button class="icon-btn" id="pRedo" aria-label="Refazer">↪️</button>
+    <button class="icon-btn" id="pZoom" aria-label="Ver a página toda" hidden>🔍</button>
+    <div class="sizes" id="sizes" aria-label="Grossura"></div>
+    <div class="spacer"></div>
+    <span id="saveState" class="save-state" aria-live="polite"></span>
+    <button class="icon-btn" id="pClear" aria-label="Apagar tudo">🗑️</button>
+    <button class="icon-btn" id="pExport" aria-label="Guardar no tablet">💾</button>
+    <button class="done-btn" id="pDone">✔ Terminei!</button>
+  </div>
+  <div class="p-tools" id="tools"></div>
+  <div class="p-stage" id="stage">
+    <div class="paper" id="paper">
+      <canvas id="cvPaint"></canvas>
+      <canvas id="cvStroke"></canvas>
+      <canvas id="cvLines"></canvas>
+    </div>
+  </div>
+  <div class="p-colors" id="colors"></div>
+</section>
+
+<!-- S04 Galeria -->
+<section id="gallery" class="screen hidden">
+  <header class="bar">
+    <button class="icon-btn" data-back aria-label="Voltar">⬅️</button>
+    <h2>Os meus desenhos</h2>
+  </header>
+  <div class="grid" id="galGrid"></div>
+  <div class="empty hidden" id="galEmpty">
+    <div class="big-emoji">🖍️</div>
+    <p>Ainda não tens desenhos.</p>
+    <button class="primary" id="galStart">Vamos pintar!</button>
+  </div>
+</section>
+
+<!-- S05 Foto -->
+<section id="photo" class="screen hidden">
+  <header class="bar">
+    <button class="icon-btn" data-back aria-label="Voltar">⬅️</button>
+    <h2>Pintar uma foto</h2>
+  </header>
+  <div class="photo-wrap">
+    <div class="photo-pick" id="photoPick">
+      <label class="pick-btn"><input type="file" accept="image/*" capture="environment" id="inCamera" hidden>📷<span>Tirar foto</span></label>
+      <label class="pick-btn"><input type="file" accept="image/*" id="inGallery" hidden>🖼️<span>Escolher foto</span></label>
+    </div>
+    <div class="photo-edit hidden" id="photoEdit">
+      <div class="photo-preview"><canvas id="cvPhoto" width="1200" height="1200"></canvas><div class="spinner hidden" id="photoSpin">⏳</div></div>
+      <div class="photo-ctrls">
+        <label>Detalhe <input type="range" min="1" max="10" value="5" id="rgDetail"></label>
+        <label>Linhas grossas <input type="range" min="0" max="4" value="2" id="rgThick"></label>
+        <button class="secondary" id="photoAgain">🔄 Outra foto</button>
+        <button class="primary" id="photoUse">✔ Pintar esta!</button>
+      </div>
+    </div>
+    <p class="hint" id="photoErr"></p>
+  </div>
+</section>
+
+<!-- S06 Pais -->
+<section id="parents" class="screen hidden">
+  <header class="bar">
+    <button class="icon-btn" data-back aria-label="Voltar">⬅️</button>
+    <h2>Para os pais</h2>
+  </header>
+  <div class="settings">
+    <div class="set-row"><b>Nível dos desenhos</b><div class="levels" id="setLevels"></div></div>
+    <div class="set-row"><b>Sons</b><button class="toggle" id="setSound"></button></div>
+    <div class="set-row"><b>Desenhos guardados</b><span id="setCount"></span></div>
+    <div class="set-row" id="rowUpdate"><b>Atualizações</b><button class="secondary" id="setUpdate">Procurar agora</button></div>
+    <div class="set-row"><b>Versão</b><span id="setVersion"></span></div>
+    <p class="hint">Tudo fica guardado no tablet. A app funciona sem internet, não tem anúncios, compras ou contas. As atualizações não apagam os desenhos.</p>
+  </div>
+</section>
+
+<!-- Modal e avisos -->
+<div class="modal hidden" id="modal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="modal-emoji" id="modalEmoji"></div>
+    <p id="modalText"></p>
+    <div class="modal-btns">
+      <button class="no" id="modalNo" aria-label="Não">✖</button>
+      <button class="yes" id="modalYes" aria-label="Sim">✔</button>
+    </div>
+  </div>
+</div>
+<div class="celebrate hidden" id="celebrate">
+  <canvas id="cvConfetti"></canvas>
+  <div class="cel-box">
+    <div class="big-emoji">🌟</div>
+    <h2>Que lindo!</h2>
+    <div class="cel-btns">
+      <button class="secondary" id="celGallery">🖼️ Os meus desenhos</button>
+      <button class="primary" id="celNew">🎨 Pintar outro</button>
+    </div>
+  </div>
+</div>
+<div class="toast hidden" id="toast"></div>
+
+<script src="gen.js"></script>
+<script src="photo.js"></script>
+<script src="db.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

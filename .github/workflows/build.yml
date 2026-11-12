@@ -1,0 +1,53 @@
+name: Construir APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-apk
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Testar se os ficheiros da app estão bem escritos
+        run: |
+          for f in web/*.js; do node --check "$f"; done
+
+      - name: Compilar o APK
+        run: gradle :app:assembleRelease --no-daemon --stacktrace
+
+      - name: Preparar ficheiro
+        run: cp app/build/outputs/apk/release/app-release.apk PintaComigo.apk
+
+      - name: Publicar versão (as apps instaladas atualizam-se a partir daqui)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.${{ github.run_number }}
+          name: Pinta Comigo 1.${{ github.run_number }}
+          make_latest: true
+          files: PintaComigo.apk
+          body: |
+            📲 **Para instalar no tablet:** abre esta página no tablet, toca em **PintaComigo.apk** e depois em **Instalar**.
+            Se for a primeira vez, o Android pede para "permitir instalar apps desta origem": aceita.
+
+            Quem já tem a app instalada recebe esta versão sozinho (a app pergunta "Atualizar?"). Os desenhos ficam guardados.

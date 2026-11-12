@@ -1,0 +1,25 @@
+feature,area,priority,original,clone,notes
+Livro de páginas para colorir,conteúdo,must,yes,yes,infinito (gerado por procedimento) em vez de biblioteca fixa
+Categorias/temas,conteúdo,must,yes,yes,8 categorias + foto
+Balde (encher espaços),ferramentas,must,yes,yes,com tolerância por baixo das linhas
+Caneta/lápis/cera/pincel,ferramentas,must,yes,yes,lápis e cera com textura
+Borracha,ferramentas,must,yes,yes,não apaga as linhas
+Apagar tudo,ferramentas,must,no,yes,com confirmação e desfazer
+Desfazer/refazer,ferramentas,must,yes,yes,12 passos
+Paleta de cores,cores,must,yes,yes,24 + cor livre
+Grossura do traço,ferramentas,should,yes,yes,3 tamanhos
+Zoom com dois dedos,tela,should,yes,yes,
+Guardar automaticamente,dados,must,partial,yes,durante a pintura e ao sair
+Retomar onde estava,dados,must,partial,yes,reabre o desenho em curso
+Galeria pessoal,dados,must,yes,yes,continuar/guardar/apagar
+Guardar na galeria do tablet,dados,should,yes,yes,Pictures/PintaComigo
+Foto para colorir,conteúdo,should,yes,yes,PENUP tem "photo drawing"; aqui converte foto em linhas
+Níveis por idade,conteúdo,should,no,yes,
+Letras e números didáticos,conteúdo,should,no,yes,
+Carimbos,ferramentas,could,no,yes,
+Sons,ui,could,no,yes,desligáveis
+Atualização automática,app,must,yes,yes,via GitHub Releases
+Funciona offline sem conta,app,must,no,yes,
+Rede social / partilha pública,social,could,yes,skip,inadequado para criança
+Live drawing / lições em vídeo,conteúdo,could,yes,skip,
+Camadas,ferramentas,could,yes,skip,
