@@ -29,4 +29,4 @@ Um caderno de colorir para crianças, para tablets Android. Pinta-se com o dedo.
 
 Para experimentar no computador: `cd web && python3 -m http.server` e abre http://localhost:8000.
 
-> Nota: a chave de assinatura (`app/pintacomigo.keystore`) está no repositório para as atualizações funcionarem sem configurar nada. Mantém o repositório **privado**.
+> Nota: o repositório tem de ficar **público**, porque é daqui que a app instalada vai buscar as atualizações sem precisar de contas. A chave de assinatura (`app/pintacomigo.keystore`) está no repositório para tudo funcionar sem configurar nada. A app só aceita atualizações publicadas *neste* repositório, que só tu controlas.
