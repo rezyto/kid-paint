@@ -655,7 +655,7 @@ const NUMWORDS = ['zero', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'set
 const CATEGORIES = [
   { id: 'animais', name: 'Animais', emoji: '🐱', color: '#FFB547' },
   { id: 'natureza', name: 'Natureza', emoji: '🌻', color: '#7BD389' },
-  { id: 'veiculos', name: 'Casas e Veículos', emoji: '🚗', color: '#5DB7F5' },
+  { id: 'veiculos', name: 'Veículos', emoji: '🚗', color: '#5DB7F5' },
   { id: 'mandalas', name: 'Mandalas', emoji: '🌀', color: '#C38BF5' },
   { id: 'letras', name: 'Letras', emoji: '🔤', color: '#FF8A8A' },
   { id: 'numeros', name: 'Números', emoji: '🔢', color: '#4FD1C5' },

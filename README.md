@@ -10,7 +10,11 @@ Um caderno de colorir para crianças, para tablets Android. Pinta-se com o dedo.
 - **Os meus desenhos**: uma galeria com tudo o que já pintou, que dá para continuar, guardar na galeria do tablet ou apagar.
 - **Atualizações automáticas**: a app avisa quando há uma versão nova, e os desenhos nunca se perdem.
 - Grátis, sem anúncios, sem compras e sem contas. Funciona sem internet.
-- Os pais entram nas definições mantendo ⚙️ carregado.
+- **Folha em branco** para desenho livre, **conta-gotas**, **cores recentes**, 5 grossuras e zoom (dois dedos ou botões).
+- **Galeria** com filtros (A pintar, Concluídos, Favoritos), ❤ favoritos, "Pintar outra vez", partilhar e guardar na galeria do tablet.
+- **Cópia de segurança**: exporta todos os desenhos para um ficheiro e restaura noutro aparelho.
+- Adapta-se a qualquer ecrã (telemóvel, tablet, vertical ou horizontal). Tem modo canhoto, sons, vibração e ecrã sempre ligado enquanto pinta.
+- Os pais entram nas definições mantendo o botão **Pais** carregado.
 
 ## Instalar no tablet
 

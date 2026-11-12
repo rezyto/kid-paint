@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.webkit.JavascriptInterface;
@@ -52,6 +53,12 @@ public class MainActivity extends Activity {
                 .setDomain(HOST)
                 .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
                 .build();
+
+        if (Build.VERSION.SDK_INT >= 28) {
+            WindowManager.LayoutParams lp = getWindow().getAttributes();
+            lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+            getWindow().setAttributes(lp);
+        }
 
         web = new WebView(this);
         web.setBackgroundColor(0xFFFFF7E8);
@@ -163,6 +170,76 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public void checkUpdate(final boolean manual) {
             runOnUiThread(() -> Updater.check(MainActivity.this, manual));
+        }
+
+        @JavascriptInterface
+        public void keepAwake(final boolean on) {
+            runOnUiThread(() -> {
+                if (on) getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                else getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            });
+        }
+
+        @JavascriptInterface
+        public void shareImage(String base64, String fileName) {
+            try {
+                byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
+                File dir = new File(getCacheDir(), "share");
+                if (!dir.exists()) dir.mkdirs();
+                File f = new File(dir, fileName);
+                try (FileOutputStream fos = new FileOutputStream(f)) {
+                    fos.write(bytes);
+                }
+                Uri uri = FileProvider.getUriForFile(MainActivity.this, getPackageName() + ".files", f);
+                Intent send = new Intent(Intent.ACTION_SEND);
+                send.setType("image/png");
+                send.putExtra(Intent.EXTRA_STREAM, uri);
+                send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                final Intent chooser = Intent.createChooser(send, "Partilhar desenho");
+                runOnUiThread(() -> {
+                    try {
+                        startActivity(chooser);
+                    } catch (Exception e) {
+                        Toast.makeText(MainActivity.this, "Não foi possível partilhar", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this, "Não foi possível partilhar", Toast.LENGTH_SHORT).show());
+            }
+        }
+
+        @JavascriptInterface
+        public boolean saveText(String text, String fileName) {
+            try {
+                byte[] bytes = text.getBytes("UTF-8");
+                if (Build.VERSION.SDK_INT >= 29) {
+                    ContentValues v = new ContentValues();
+                    v.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
+                    v.put(MediaStore.MediaColumns.MIME_TYPE, "application/json");
+                    v.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/PintaComigo");
+                    ContentResolver cr = getContentResolver();
+                    Uri uri = cr.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, v);
+                    if (uri == null) return false;
+                    try (OutputStream os = cr.openOutputStream(uri)) {
+                        if (os == null) return false;
+                        os.write(bytes);
+                    }
+                    return true;
+                } else {
+                    if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        runOnUiThread(() -> requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQ_STORAGE));
+                        return false;
+                    }
+                    File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "PintaComigo");
+                    if (!dir.exists()) dir.mkdirs();
+                    try (FileOutputStream fos = new FileOutputStream(new File(dir, fileName))) {
+                        fos.write(bytes);
+                    }
+                    return true;
+                }
+            } catch (Exception e) {
+                return false;
+            }
         }
 
         @JavascriptInterface

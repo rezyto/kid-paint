@@ -3,136 +3,204 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#FFF7E8">
+<meta name="theme-color" content="#F7F5F2">
 <title>Pinta Comigo</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- S01 Início -->
-<section id="home" class="screen">
-  <header class="home-head">
-    <h1 class="logo"><span>P</span><span>i</span><span>n</span><span>t</span><span>a</span> <span>C</span><span>o</span><span>m</span><span>i</span><span>g</span><span>o</span> 🎨</h1>
-    <button id="btnParents" class="icon-btn small" aria-label="Pais: mantém carregado">⚙️</button>
-  </header>
-  <div id="continueBox"></div>
-  <div class="tiles" id="tiles"></div>
-</section>
+<!-- Ícones (desenhados para esta app) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.5 12 4l8.5 6.5V19a1 1 0 0 1-1 1H15v-5.5H9V20H4.5a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-images" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="m21 15.5-4.5-4.5L8 19.5"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l1.8-2.6h6.4L17 8h3a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.4"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6.5h9M18 6.5h2M4 12h3M11 12h9M4 17.5h11M19 17.5h1"/><circle cx="15.5" cy="6.5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17.5" r="2"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24"><path d="m15 14 5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V5M7 10l5-5 5 5M5 20h14"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="m8.2 10.8 7.6-4.1M8.2 13.2l7.6 4.1"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></symbol>
+    <symbol id="i-zin" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2M8 11h6M11 8v6"/></symbol>
+    <symbol id="i-zout" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2M8 11h6"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="8.7" cy="8.7" r="1.1" class="fill"/><circle cx="15.3" cy="15.3" r="1.1" class="fill"/><circle cx="12" cy="12" r="1.1" class="fill"/><circle cx="15.3" cy="8.7" r="1.1" class="fill"/><circle cx="8.7" cy="15.3" r="1.1" class="fill"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.2a4.2 4.2 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2"/><path d="M15.5 8.5V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v9.5a1 1 0 0 0 1 1h3.5"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.4" class="fill"/><circle cx="12" cy="12" r="1.4" class="fill"/><circle cx="18.5" cy="12" r="1.4" class="fill"/></symbol>
+    <symbol id="i-page" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.3 0 1.9-1 1.4-2.1-.6-1.3.2-2.7 1.7-2.7H17a3.5 3.5 0 0 0 3.5-3.5c0-4.8-3.8-8.7-8.5-8.7z"/><circle cx="7.8" cy="11" r="1.1" class="fill"/><circle cx="10.5" cy="7.5" r="1.1" class="fill"/><circle cx="15" cy="7.8" r="1.1" class="fill"/></symbol>
+  </defs>
+</svg>
 
-<!-- S02 Catálogo -->
-<section id="catalog" class="screen hidden">
-  <header class="bar">
-    <button class="icon-btn" data-back aria-label="Voltar">⬅️</button>
-    <h2 id="catTitle"></h2>
-    <div class="levels" id="levels" role="radiogroup" aria-label="Nível"></div>
-    <button class="icon-btn" id="btnRandom" aria-label="Surpreende-me">🎲</button>
-  </header>
-  <div class="grid" id="catGrid"></div>
-  <p class="sentinel">Há sempre mais desenhos: continua a descer 👇</p>
-</section>
+<div class="app" id="app">
+  <!-- Navegação: barra lateral no tablet, barra de baixo no telemóvel -->
+  <nav class="nav" id="nav" aria-label="Navegação">
+    <div class="nav-logo" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#5B5BD6"/><path d="M24 11a13 13 0 1 0 0 26c2 0 2.9-1.5 2.1-3.2-.9-2 .3-4.1 2.6-4.1H32a5.4 5.4 0 0 0 5.4-5.4C37.4 17 31.4 11 24 11z" fill="#fff"/><circle cx="17" cy="22" r="2.2" fill="#E5484D"/><circle cx="21" cy="16.8" r="2.2" fill="#F5B000"/><circle cx="28" cy="17.2" r="2.2" fill="#1F9D6B"/></svg></div>
+    <button class="nav-btn" data-nav="home"><svg><use href="#i-home"/></svg><span>Início</span></button>
+    <button class="nav-btn" data-nav="gallery"><svg><use href="#i-images"/></svg><span>Desenhos</span></button>
+    <button class="nav-btn" data-nav="photo"><svg><use href="#i-camera"/></svg><span>Foto</span></button>
+    <button class="nav-btn" id="navParents" aria-label="Pais (mantém carregado)"><svg><use href="#i-settings"/></svg><span>Pais</span></button>
+  </nav>
 
-<!-- S03 Pintar -->
-<section id="paint" class="screen hidden">
-  <div class="p-top">
-    <button class="icon-btn" id="pBack" aria-label="Voltar ao início">🏠</button>
-    <button class="icon-btn" id="pUndo" aria-label="Desfazer">↩️</button>
-    <button class="icon-btn" id="pRedo" aria-label="Refazer">↪️</button>
-    <button class="icon-btn" id="pZoom" aria-label="Ver a página toda" hidden>🔍</button>
-    <div class="sizes" id="sizes" aria-label="Grossura"></div>
-    <div class="spacer"></div>
-    <span id="saveState" class="save-state" aria-live="polite"></span>
-    <button class="icon-btn" id="pClear" aria-label="Apagar tudo">🗑️</button>
-    <button class="icon-btn" id="pExport" aria-label="Guardar no tablet">💾</button>
-    <button class="done-btn" id="pDone">✔ Terminei!</button>
-  </div>
-  <div class="p-tools" id="tools"></div>
-  <div class="p-stage" id="stage">
-    <div class="paper" id="paper">
-      <canvas id="cvPaint"></canvas>
-      <canvas id="cvStroke"></canvas>
-      <canvas id="cvLines"></canvas>
-    </div>
-  </div>
-  <div class="p-colors" id="colors"></div>
-</section>
-
-<!-- S04 Galeria -->
-<section id="gallery" class="screen hidden">
-  <header class="bar">
-    <button class="icon-btn" data-back aria-label="Voltar">⬅️</button>
-    <h2>Os meus desenhos</h2>
-  </header>
-  <div class="grid" id="galGrid"></div>
-  <div class="empty hidden" id="galEmpty">
-    <div class="big-emoji">🖍️</div>
-    <p>Ainda não tens desenhos.</p>
-    <button class="primary" id="galStart">Vamos pintar!</button>
-  </div>
-</section>
-
-<!-- S05 Foto -->
-<section id="photo" class="screen hidden">
-  <header class="bar">
-    <button class="icon-btn" data-back aria-label="Voltar">⬅️</button>
-    <h2>Pintar uma foto</h2>
-  </header>
-  <div class="photo-wrap">
-    <div class="photo-pick" id="photoPick">
-      <label class="pick-btn"><input type="file" accept="image/*" capture="environment" id="inCamera" hidden>📷<span>Tirar foto</span></label>
-      <label class="pick-btn"><input type="file" accept="image/*" id="inGallery" hidden>🖼️<span>Escolher foto</span></label>
-    </div>
-    <div class="photo-edit hidden" id="photoEdit">
-      <div class="photo-preview"><canvas id="cvPhoto" width="1200" height="1200"></canvas><div class="spinner hidden" id="photoSpin">⏳</div></div>
-      <div class="photo-ctrls">
-        <label>Detalhe <input type="range" min="1" max="10" value="5" id="rgDetail"></label>
-        <label>Linhas grossas <input type="range" min="0" max="4" value="2" id="rgThick"></label>
-        <button class="secondary" id="photoAgain">🔄 Outra foto</button>
-        <button class="primary" id="photoUse">✔ Pintar esta!</button>
+  <main class="main">
+    <!-- S01 Início -->
+    <section id="home" class="screen">
+      <header class="page-head">
+        <div class="grow"><p class="eyebrow">Pinta Comigo</p><h1>Olá! O que vamos pintar hoje?</h1></div>
+      </header>
+      <div class="scroll">
+        <div id="continueBox"></div>
+        <h2 class="section">Livros para colorir</h2>
+        <div class="cards" id="cards"></div>
+        <h2 class="section">Começar do zero</h2>
+        <div class="cards wide" id="startCards"></div>
+        <div id="recentBox"></div>
       </div>
+    </section>
+
+    <!-- S02 Catálogo -->
+    <section id="catalog" class="screen hidden">
+      <header class="page-head">
+        <button class="ibtn" data-back aria-label="Voltar"><svg><use href="#i-back"/></svg></button>
+        <div class="grow"><p class="eyebrow">Livro</p><h1 id="catTitle"></h1></div>
+        <button class="btn ghost" id="btnRandom"><svg><use href="#i-dice"/></svg><span class="hide-xs">Surpresa</span></button>
+      </header>
+      <div class="toolbar-line"><div class="seg" id="levels" role="radiogroup" aria-label="Nível"></div></div>
+      <div class="scroll" id="catScroll"><div class="grid" id="catGrid"></div><div class="loader">A preparar mais desenhos…</div></div>
+    </section>
+
+    <!-- S04 Galeria -->
+    <section id="gallery" class="screen hidden">
+      <header class="page-head"><div class="grow"><p class="eyebrow">Galeria</p><h1>Os meus desenhos</h1></div><span class="badge" id="galCount"></span></header>
+      <div class="toolbar-line"><div class="seg" id="galFilter" role="radiogroup" aria-label="Filtro"></div></div>
+      <div class="scroll">
+        <div class="grid" id="galGrid"></div>
+        <div class="empty hidden" id="galEmpty">
+          <div class="empty-art"><svg><use href="#i-palette"/></svg></div>
+          <h2>Ainda não há desenhos aqui</h2>
+          <p class="muted">Escolhe um livro e começa a pintar. Tudo fica guardado sozinho.</p>
+          <button class="btn primary" id="galStart">Começar a pintar</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- S05 Foto -->
+    <section id="photo" class="screen hidden">
+      <header class="page-head"><div class="grow"><p class="eyebrow">Da minha foto</p><h1>Transforma uma foto num desenho</h1></div></header>
+      <div class="scroll">
+        <div class="photo-pick" id="photoPick">
+          <label class="pick"><input type="file" accept="image/*" capture="environment" id="inCamera" hidden><span class="pick-ic"><svg><use href="#i-camera"/></svg></span><b>Tirar foto</b><small>Usa a câmara</small></label>
+          <label class="pick"><input type="file" accept="image/*" id="inGallery" hidden><span class="pick-ic"><svg><use href="#i-images"/></svg></span><b>Escolher foto</b><small>Da galeria</small></label>
+        </div>
+        <div class="photo-edit hidden" id="photoEdit">
+          <div class="photo-preview"><canvas id="cvPhoto" width="1200" height="1200"></canvas><div class="spinner hidden" id="photoSpin"><i></i></div></div>
+          <div class="panel">
+            <label class="field"><span>Detalhe</span><input type="range" min="1" max="10" value="5" id="rgDetail"></label>
+            <label class="field"><span>Grossura das linhas</span><input type="range" min="0" max="4" value="2" id="rgThick"></label>
+            <button class="btn primary wide" id="photoUse"><svg><use href="#i-check"/></svg><span>Pintar esta</span></button>
+            <button class="btn ghost wide" id="photoAgain">Escolher outra</button>
+          </div>
+        </div>
+        <p class="muted center" id="photoErr"></p>
+      </div>
+    </section>
+
+    <!-- S06 Pais -->
+    <section id="parents" class="screen hidden">
+      <header class="page-head">
+        <button class="ibtn" data-back aria-label="Voltar"><svg><use href="#i-back"/></svg></button>
+        <div class="grow"><p class="eyebrow">Para os pais</p><h1>Definições</h1></div>
+      </header>
+      <div class="scroll">
+        <div class="settings">
+          <h2 class="section">Desenhos</h2>
+          <div class="list">
+            <div class="li"><div><b>Nível dos desenhos</b><small>Aumenta à medida que a criança cresce</small></div><div class="seg" id="setLevels"></div></div>
+          </div>
+          <h2 class="section">Ecrã e toque</h2>
+          <div class="list">
+            <div class="li"><div><b>Modo canhoto</b><small>Ferramentas do lado direito</small></div><button class="switch" id="setLeft"></button></div>
+            <div class="li"><div><b>Sons</b><small>Pequenos sons ao tocar</small></div><button class="switch" id="setSound"></button></div>
+            <div class="li"><div><b>Vibração</b><small>Resposta ao toque</small></div><button class="switch" id="setHaptic"></button></div>
+            <div class="li"><div><b>Ecrã sempre ligado</b><small>Enquanto pinta</small></div><button class="switch" id="setAwake"></button></div>
+          </div>
+          <h2 class="section">Dados</h2>
+          <div class="list">
+            <div class="li"><div><b>Desenhos guardados</b><small id="setStorage"></small></div><span class="badge" id="setCount">0</span></div>
+            <div class="li"><div><b>Cópia de segurança</b><small>Guarda todos os desenhos num ficheiro</small></div><button class="btn ghost" id="setBackup"><svg><use href="#i-download"/></svg><span>Exportar</span></button></div>
+            <div class="li"><div><b>Restaurar cópia</b><small>Junta os desenhos de um ficheiro</small></div><label class="btn ghost"><input type="file" accept=".json,application/json" id="inRestore" hidden><svg><use href="#i-upload"/></svg><span>Importar</span></label></div>
+          </div>
+          <h2 class="section">Aplicação</h2>
+          <div class="list">
+            <div class="li" id="rowUpdate"><div><b>Atualizações</b><small>Instala melhorias sem perder desenhos</small></div><button class="btn ghost" id="setUpdate">Procurar</button></div>
+            <div class="li"><div><b>Versão</b><small>Sem anúncios, compras ou contas</small></div><span class="badge" id="setVersion"></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- S03 Pintar (ecrã inteiro) -->
+  <section id="paint" class="paint hidden">
+    <header class="p-top">
+      <button class="ibtn" id="pBack" aria-label="Voltar"><svg><use href="#i-back"/></svg></button>
+      <div class="p-title"><b id="pTitle"></b><small id="saveState" aria-live="polite"></small></div>
+      <button class="ibtn" id="pUndo" aria-label="Desfazer"><svg><use href="#i-undo"/></svg></button>
+      <button class="ibtn" id="pRedo" aria-label="Refazer"><svg><use href="#i-redo"/></svg></button>
+      <span class="divider wide-only"></span>
+      <button class="ibtn wide-only" id="pZoomOut" aria-label="Afastar"><svg><use href="#i-zout"/></svg></button>
+      <button class="ibtn wide-only" id="pFit" aria-label="Ver a página toda"><svg><use href="#i-fit"/></svg></button>
+      <button class="ibtn wide-only" id="pZoomIn" aria-label="Aproximar"><svg><use href="#i-zin"/></svg></button>
+      <span class="divider"></span>
+      <button class="ibtn" id="pMore" aria-label="Mais opções"><svg><use href="#i-more"/></svg></button>
+      <button class="btn primary" id="pDone" aria-label="Concluir"><svg><use href="#i-check"/></svg><span class="hide-xs">Concluir</span></button>
+    </header>
+    <div class="p-body" id="pBody">
+      <aside class="p-tools" id="tools" aria-label="Ferramentas"></aside>
+      <div class="p-stage" id="stage">
+        <div class="paper" id="paper">
+          <canvas id="cvPaint"></canvas>
+          <canvas id="cvStroke"></canvas>
+          <canvas id="cvLines"></canvas>
+        </div>
+        <div class="zoom-pill hidden" id="zoomPill"></div>
+      </div>
+      <aside class="p-colors" id="colors" aria-label="Cores"></aside>
     </div>
-    <p class="hint" id="photoErr"></p>
-  </div>
-</section>
+  </section>
+</div>
 
-<!-- S06 Pais -->
-<section id="parents" class="screen hidden">
-  <header class="bar">
-    <button class="icon-btn" data-back aria-label="Voltar">⬅️</button>
-    <h2>Para os pais</h2>
-  </header>
-  <div class="settings">
-    <div class="set-row"><b>Nível dos desenhos</b><div class="levels" id="setLevels"></div></div>
-    <div class="set-row"><b>Sons</b><button class="toggle" id="setSound"></button></div>
-    <div class="set-row"><b>Desenhos guardados</b><span id="setCount"></span></div>
-    <div class="set-row" id="rowUpdate"><b>Atualizações</b><button class="secondary" id="setUpdate">Procurar agora</button></div>
-    <div class="set-row"><b>Versão</b><span id="setVersion"></span></div>
-    <p class="hint">Tudo fica guardado no tablet. A app funciona sem internet, não tem anúncios, compras ou contas. As atualizações não apagam os desenhos.</p>
-  </div>
-</section>
-
-<!-- Modal e avisos -->
-<div class="modal hidden" id="modal" role="dialog" aria-modal="true">
+<!-- Menus, diálogos e avisos -->
+<div class="pop-layer hidden" id="popLayer"><div class="pop" id="pop" role="menu"></div></div>
+<div class="modal hidden" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalText">
   <div class="modal-box">
-    <div class="modal-emoji" id="modalEmoji"></div>
-    <p id="modalText"></p>
+    <div class="modal-ic" id="modalIc"></div>
+    <h2 id="modalText"></h2>
+    <p class="muted" id="modalSub"></p>
     <div class="modal-btns">
-      <button class="no" id="modalNo" aria-label="Não">✖</button>
-      <button class="yes" id="modalYes" aria-label="Sim">✔</button>
+      <button class="btn ghost" id="modalNo">Cancelar</button>
+      <button class="btn primary" id="modalYes">Sim</button>
     </div>
   </div>
 </div>
 <div class="celebrate hidden" id="celebrate">
   <canvas id="cvConfetti"></canvas>
   <div class="cel-box">
-    <div class="big-emoji">🌟</div>
-    <h2>Que lindo!</h2>
+    <img id="celImg" alt="">
+    <h2>Ficou lindo!</h2>
+    <p class="muted">Ficou guardado em "Os meus desenhos".</p>
     <div class="cel-btns">
-      <button class="secondary" id="celGallery">🖼️ Os meus desenhos</button>
-      <button class="primary" id="celNew">🎨 Pintar outro</button>
+      <button class="btn ghost" id="celGallery"><svg><use href="#i-images"/></svg><span>Ver desenhos</span></button>
+      <button class="btn primary" id="celNew"><svg><use href="#i-palette"/></svg><span>Pintar outro</span></button>
     </div>
   </div>
 </div>
-<div class="toast hidden" id="toast"></div>
+<div class="toast hidden" id="toast" role="status"></div>
 
 <script src="gen.js"></script>
 <script src="photo.js"></script>

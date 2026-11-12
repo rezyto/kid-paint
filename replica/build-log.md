@@ -8,3 +8,4 @@
 - S05 Foto: câmara/galeria, detalhe e espessura, erro de ficheiro.
 - S06 Pais: nível, sons, contagem, atualizações, versão (porta: manter carregado).
 - Android: WebView com asset loader (origem estável → dados persistem), escolha de fotos, guardar na galeria, atualizador por GitHub Releases, ecrã inteiro.
+- v1.4: novo design (ícones próprios, cartões com pré-visualização, barra lateral/inferior). Layout adaptável testado em 360×740, 390×844, 844×390, 673×841, 800×1280, 1280×800 e 1920×1080. Corrigido: no telemóvel as miniaturas sobrepunham-se e o traço podia ser cancelado pelo sistema. Novo: folha em branco, conta-gotas, cores recentes, 5 grossuras, botões de zoom, favoritos/filtros, partilhar, pintar outra vez, cópia de segurança/restauro, modo canhoto, vibração, ecrã ligado.
